@@ -11,10 +11,11 @@ from google.genai import types
 from datetime import datetime, UTC
 import subprocess
 import sys
-import re
+import re                                                                   
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WRAPPER_PATH = os.path.join(BASE_DIR, "middleware", "wrapper.py")
+
 
 load_dotenv()
 
@@ -24,12 +25,7 @@ app = FastAPI()
 # cors
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",   # ADD THIS
-        "http://127.0.0.1:3001"    # ADD THIS
-    ],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
