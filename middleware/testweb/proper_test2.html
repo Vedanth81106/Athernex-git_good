@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply — Senior ML Engineer · Nexus AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #7fff6e;
+    --accent2: #6e8fff;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --danger: #ff6e6e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(12,12,15,0.95);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .logo span { color: var(--accent); }
+  .breadcrumb {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .breadcrumb a { color: var(--muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--text); }
+  .breadcrumb-sep { color: var(--border); }
+
+  .layout {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 48px;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 48px;
+    align-items: start;
+  }
+
+  /* LEFT — job detail */
+  .job-detail { position: sticky; top: 88px; }
+
+  .company-badge {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .co-logo {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    background: rgba(127,255,110,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    border: 1px solid rgba(127,255,110,0.2);
+  }
+  .co-info { flex: 1; }
+  .co-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .co-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .job-title-big {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    border: 1px solid;
+  }
+  .tag-g { background: rgba(127,255,110,0.08); color: var(--accent); border-color: rgba(127,255,110,0.2); }
+  .tag-b { background: rgba(110,143,255,0.08); color: var(--accent2); border-color: rgba(110,143,255,0.2); }
+  .tag-m { background: rgba(240,240,245,0.05); color: var(--muted); border-color: var(--border); }
+
+  .salary-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .salary-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+  .salary-val { font-size: 20px; font-weight: 800; color: var(--accent); letter-spacing: -0.03em; }
+  .equity-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent2); }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 28px;
+  }
+
+  .desc-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.75;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .req-list {
+    list-style: none;
+    margin-top: 12px;
+  }
+  .req-list li {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+  .req-list li::before {
+    content: '→';
+    color: var(--accent2);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* RIGHT — application form */
+  .form-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    position: sticky;
+    top: 88px;
+  }
+
+  .form-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .form-subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 11px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input::placeholder,
+  .form-textarea::placeholder { color: var(--muted); }
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus { border-color: var(--accent2); }
+  .form-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+  .form-select { cursor: pointer; }
+  .form-select option { background: var(--surface2); }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .upload-zone {
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+  }
+  .upload-zone:hover {
+    border-color: var(--accent2);
+    background: rgba(110,143,255,0.04);
+  }
+  .upload-icon { font-size: 22px; margin-bottom: 6px; }
+  .upload-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .upload-text strong { color: var(--accent2); }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #0c0c0f;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(127,255,110,0.25); }
+  .submit-btn:active { transform: translateY(0); }
+
+  .form-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 33%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .layout { animation: fadeIn 0.4s ease; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">arcane<span>.</span>jobs</div>
+  <div class="breadcrumb">
+    <a href="test.html">Jobs</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Nexus AI</span>
+    <span class="breadcrumb-sep">›</span>
+    <span style="color:var(--text)">Senior ML Engineer</span>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- LEFT: Job Detail -->
+  <div class="job-detail" id="job-detail-panel">
+    <div class="company-badge">
+      <div class="co-logo">N</div>
+      <div class="co-info">
+        <div class="co-name">Nexus AI</div>
+        <div class="co-meta">Series B · San Francisco · nexus.ai</div>
+      </div>
+    </div>
+
+    <div class="job-title-big" id="job-title">Senior ML Engineer</div>
+
+    <div class="tag-row">
+      <span class="tag tag-g">Remote</span>
+      <span class="tag tag-b">Full-time</span>
+      <span class="tag tag-m">ML / AI</span>
+      <span class="tag tag-m">5+ years exp</span>
+    </div>
+
+    <div class="salary-block">
+      <div>
+        <div class="salary-label">Base Salary</div>
+        <div class="salary-val">$180k–$240k</div>
+      </div>
+      <div style="text-align:right">
+        <div class="salary-label">Equity</div>
+        <div class="equity-val">0.10% – 0.25%</div>
+      </div>
+    </div>
+
+    <div class="section-label">About the role</div>
+    <p class="desc-text">We're building the infrastructure layer for the next generation of AI systems. You'll work directly with our research team to take models from prototype to production, owning the full ML lifecycle from data pipelines through deployment and monitoring.</p>
+
+    <div class="section-label">What you'll do</div>
+    <ul class="req-list">
+      <li>Design and implement scalable training pipelines handling 100TB+ datasets</li>
+      <li>Lead model optimization: quantization, distillation, inference speed improvements</li>
+      <li>Build robust evaluation frameworks and red-teaming infrastructure</li>
+      <li>Collaborate with research to productionize novel architectures</li>
+      <li>Mentor 2–3 junior ML engineers on the platform team</li>
+    </ul>
+
+    <div class="section-label">Requirements</div>
+    <ul class="req-list">
+      <li>5+ years ML engineering experience with production deployments</li>
+      <li>Strong Python, PyTorch/JAX; experience with distributed training (FSDP, DeepSpeed)</li>
+      <li>Experience with MLOps tooling: Kubeflow, MLflow, or equivalent</li>
+      <li>Bonus: publications or open-source contributions in ML infrastructure</li>
+    </ul>
+  </div>
+
+  <!-- RIGHT: Application Form -->
+  <div class="form-panel" id="application-form-panel">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="form-title">Apply for this role</div>
+    <div class="form-subtitle">Step 1 of 3 — Basic info</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="first-name">FIRST NAME</label>
+        <input type="text" class="form-input" id="first-name" name="first_name" placeholder="Arjun" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="last-name">LAST NAME</label>
+        <input type="text" class="form-input" id="last-name" name="last_name" placeholder="Sharma" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="email-input">EMAIL ADDRESS</label>
+      <input type="email" class="form-input" id="email-input" name="email" placeholder="you@domain.com" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="linkedin-url">LINKEDIN URL</label>
+      <input type="url" class="form-input" id="linkedin-url" name="linkedin" placeholder="linkedin.com/in/..." />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="years-exp">YEARS OF EXPERIENCE</label>
+      <select class="form-select" id="years-exp" name="experience">
+        <option value="">Select range...</option>
+        <option value="0-2">0–2 years</option>
+        <option value="3-5">3–5 years</option>
+        <option value="5-8">5–8 years</option>
+        <option value="8+">8+ years</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="cover-note">WHY NEXUS AI?</label>
+      <textarea class="form-textarea" id="cover-note" name="cover_note" placeholder="What excites you about this role specifically? (2–4 sentences)"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">RESUME / CV</label>
+      <div class="upload-zone" id="resume-upload" role="button" aria-label="Upload resume">
+        <div class="upload-icon">📄</div>
+        <div class="upload-text"><strong>Click to upload</strong> or drag and drop<br>PDF, DOCX — max 5MB</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="submit-btn" id="cnt-appli" type="button" onclick="window.location.href='test3.html'">
+      Continue to Next Step →
+    </button>
+
+    <p class="form-note">By applying you agree to our terms. We respond to every application within 5 business days.</p>
+  </div>
+
+</div>
+
+<script>
+  // Update progress as fields are filled
+  const inputs = document.querySelectorAll('.form-input, .form-select, .form-textarea');
+  const fill = document.getElementById('progress-fill');
+  inputs.forEach(input => {
+    input.addEventListener('input', () => {
+      const filled = [...inputs].filter(i => i.value.trim()).length;
+      const pct = 33 + (filled / inputs.length) * 34;
+      fill.style.width = pct + '%';
+    });
+  });
+</script>
+</body>
+</html>
