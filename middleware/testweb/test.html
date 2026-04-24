@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arcane Jobs — Find Your Next Role</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #7fff6e;
+    --accent2: #6e8fff;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --danger: #ff6e6e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(12,12,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  .logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .nav-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--text); }
+
+  .btn-post {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 8px 18px;
+    background: var(--accent);
+    color: #0c0c0f;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s;
+  }
+  .btn-post:hover { opacity: 0.85; }
+
+  .hero {
+    padding: 80px 48px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    margin-bottom: 20px;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--accent2);
+    position: relative;
+  }
+  .hero-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .search-bar {
+    display: flex;
+    gap: 12px;
+    max-width: 640px;
+    margin-bottom: 60px;
+  }
+  .search-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input::placeholder { color: var(--muted); }
+  .search-input:focus { border-color: var(--accent2); }
+
+  .btn-search {
+    padding: 14px 28px;
+    background: var(--accent2);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .btn-search:hover { opacity: 0.85; }
+
+  .filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .filter-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .filter-chip:hover, .filter-chip.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(127,255,110,0.05);
+  }
+
+  .jobs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 0 48px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .jobs-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .jobs-count strong { color: var(--text); }
+
+  .sort-select {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .jobs-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  .job-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+  }
+  .job-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(110,143,255,0.05) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .job-card:hover {
+    border-color: var(--accent2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(110,143,255,0.12);
+  }
+  .job-card:hover::before { opacity: 1; }
+
+  .job-card.featured {
+    border-color: rgba(127,255,110,0.3);
+  }
+  .job-card.featured::after {
+    content: 'FEATURED';
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    background: rgba(127,255,110,0.1);
+    border: 1px solid rgba(127,255,110,0.2);
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  .company-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .company-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .company-info { flex: 1; }
+  .company-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .company-stage {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    opacity: 0.6;
+    margin-top: 1px;
+  }
+
+  .job-title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .job-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .meta-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .pill-remote { background: rgba(127,255,110,0.08); color: var(--accent); border: 1px solid rgba(127,255,110,0.15); }
+  .pill-type   { background: rgba(110,143,255,0.08); color: var(--accent2); border: 1px solid rgba(110,143,255,0.15); }
+  .pill-loc    { background: rgba(240,240,245,0.05); color: var(--muted); border: 1px solid var(--border); }
+
+  .job-salary {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: -0.02em;
+  }
+  .job-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .job-posted {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .apply-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 7px 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .apply-btn:hover {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: #fff;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .job-card { animation: fadeUp 0.4s ease both; }
+  .job-card:nth-child(1) { animation-delay: 0.05s; }
+  .job-card:nth-child(2) { animation-delay: 0.10s; }
+  .job-card:nth-child(3) { animation-delay: 0.15s; }
+  .job-card:nth-child(4) { animation-delay: 0.20s; }
+  .job-card:nth-child(5) { animation-delay: 0.25s; }
+  .job-card:nth-child(6) { animation-delay: 0.30s; }
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <div class="logo">arcane<span>.</span>jobs</div>
+  <div class="nav-right">
+    <a href="#" class="nav-link">browse</a>
+    <a href="#" class="nav-link">companies</a>
+    <a href="#" class="nav-link">salary</a>
+    <button class="btn-post" id="post-job-btn">post a job</button>
+  </div>
+</nav>
+
+<div class="hero" id="hero-section">
+  <div class="hero-label">2,847 open roles · updated daily</div>
+  <h1>Find work that<br>actually <em>matters</em></h1>
+  <p class="hero-sub">Curated roles at high-signal companies. No recruiter spam. No ghost postings. Just real opportunities.</p>
+
+  <div class="search-bar" id="search-section">
+    <input type="text" class="search-input" id="search-input" placeholder="role, skill, or company..." />
+    <button class="btn-search" id="search-btn">Search Jobs</button>
+  </div>
+
+  <div class="filters" id="filter-section">
+    <button class="filter-chip active" data-filter="all">All roles</button>
+    <button class="filter-chip" data-filter="engineering">Engineering</button>
+    <button class="filter-chip" data-filter="ml">ML / AI</button>
+    <button class="filter-chip" data-filter="design">Design</button>
+    <button class="filter-chip" data-filter="product">Product</button>
+    <button class="filter-chip" data-filter="remote">Remote only</button>
+  </div>
+</div>
+
+<div class="jobs-header">
+  <span class="jobs-count"><strong>6</strong> roles found</span>
+  <select class="sort-select" id="sort-select">
+    <option>Latest first</option>
+    <option>Salary: High to Low</option>
+    <option>Most relevant</option>
+  </select>
+</div>
+
+<div class="jobs-grid" id="jobs-grid">
+
+  <a href="test2.html?job=senior-ml-engineer" class="job-card featured" id="job-card-1" data-kintsugi-target="true">
+    <div class="company-row">
+      <div class="company-logo" style="background:rgba(127,255,110,0.1);color:var(--accent)">N</div>
+      <div class="company-info">
+        <div class="company-name">Nexus AI</div>
+        <div class="company-stage">Series B · 120 employees</div>
+      </div>
+    </div>
+    <div class="job-title">Senior ML Engineer</div>
+    <div class="job-meta">
+      <span class="meta-pill pill-remote">Remote</span>
+      <span class="meta-pill pill-type">Full-time</span>
+      <span class="meta-pill pill-loc">San Francisco</span>
+    </div>
+    <div class="job-salary">$180k – $240k</div>
+    <div class="job-footer">
+      <span class="job-posted">2 days ago</span>
+      <span class="apply-btn" id="apply-nexus">View & Apply</span>
+    </div>
+  </a>
+
+  <a href="test2.html?job=frontend-engineer" class="job-card" id="job-card-2">
+    <div class="company-row">
+      <div class="company-logo" style="background:rgba(110,143,255,0.1);color:var(--accent2)">V</div>
+      <div class="company-info">
+        <div class="company-name">Vault Protocol</div>
+        <div class="company-stage">Seed · 28 employees</div>
+      </div>
+    </div>
+    <div class="job-title">Frontend Engineer</div>
+    <div class="job-meta">
+      <span class="meta-pill pill-remote">Remote</span>
+      <span class="meta-pill pill-type">Full-time</span>
+      <span class="meta-pill pill-loc">New York</span>
+    </div>
+    <div class="job-salary">$130k – $165k</div>
+    <div class="job-footer">
+      <span class="job-posted">4 days ago</span>
+      <span class="apply-btn" id="apply-vault">View & Apply</span>
+    </div>
+  </a>
+
+  <a href="test2.html?job=ai-research-scientist" class="job-card" id="job-card-3">
+    <div class="company-row">
+      <div class="company-logo" style="background:rgba(255,110,110,0.1);color:#ff8e8e">P</div>
+      <div class="company-info">
+        <div class="company-name">Prism Labs</div>
+        <div class="company-stage">Series A · 64 employees</div>
+      </div>
+    </div>
+    <div class="job-title">AI Research Scientist</div>
+    <div class="job-meta">
+      <span class="meta-pill pill-type">Full-time</span>
+      <span class="meta-pill pill-loc">London</span>
+    </div>
+    <div class="job-salary">£95k – £140k</div>
+    <div class="job-footer">
+      <span class="job-posted">1 week ago</span>
+      <span class="apply-btn" id="apply-prism">View & Apply</span>
+    </div>
+  </a>
+
+  <a href="test2.html?job=product-designer" class="job-card" id="job-card-4">
+    <div class="company-row">
+      <div class="company-logo" style="background:rgba(255,200,100,0.1);color:#ffc864">O</div>
+      <div class="company-info">
+        <div class="company-name">Orbit Systems</div>
+        <div class="company-stage">Series C · 340 employees</div>
+      </div>
+    </div>
+    <div class="job-title">Product Designer</div>
+    <div class="job-meta">
+      <span class="meta-pill pill-remote">Hybrid</span>
+      <span class="meta-pill pill-type">Full-time</span>
+      <span class="meta-pill pill-loc">Berlin</span>
+    </div>
+    <div class="job-salary">€80k – €110k</div>
+    <div class="job-footer">
+      <span class="job-posted">3 days ago</span>
+      <span class="apply-btn" id="apply-orbit">View & Apply</span>
+    </div>
+  </a>
+
+  <a href="test2.html?job=backend-engineer" class="job-card" id="job-card-5">
+    <div class="company-row">
+      <div class="company-logo" style="background:rgba(100,220,255,0.1);color:#64dcff">D</div>
+      <div class="company-info">
+        <div class="company-name">Deepform</div>
+        <div class="company-stage">Pre-seed · 9 employees</div>
+      </div>
+    </div>
+    <div class="job-title">Backend Engineer (Python)</div>
+    <div class="job-meta">
+      <span class="meta-pill pill-remote">Remote</span>
+      <span class="meta-pill pill-type">Full-time</span>
+      <span class="meta-pill pill-loc">Anywhere</span>
+    </div>
+    <div class="job-salary">$110k – $145k</div>
+    <div class="job-footer">
+      <span class="job-posted">6 days ago</span>
+      <span class="apply-btn" id="apply-deepform">View & Apply</span>
+    </div>
+  </a>
+
+  <a href="test2.html?job=devrel-engineer" class="job-card" id="job-card-6">
+    <div class="company-row">
+      <div class="company-logo" style="background:rgba(180,100,255,0.1);color:#c864ff">S</div>
+      <div class="company-info">
+        <div class="company-name">Synapse Dev</div>
+        <div class="company-stage">Series A · 55 employees</div>
+      </div>
+    </div>
+    <div class="job-title">Developer Relations Engineer</div>
+    <div class="job-meta">
+      <span class="meta-pill pill-remote">Remote</span>
+      <span class="meta-pill pill-type">Full-time</span>
+    </div>
+    <div class="job-salary">$120k – $155k</div>
+    <div class="job-footer">
+      <span class="job-posted">5 days ago</span>
+      <span class="apply-btn" id="apply-synapse">View & Apply</span>
+    </div>
+  </a>
+
+</div>
+
+<script>
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

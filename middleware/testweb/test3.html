@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Submitted — Arcane Jobs</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #7fff6e;
+    --accent2: #6e8fff;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(12,12,15,0.95);
+  }
+  .logo { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
+  .logo span { color: var(--accent); }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 64px 48px;
+  }
+
+  /* SUCCESS BANNER */
+  .success-banner {
+    background: rgba(127,255,110,0.06);
+    border: 1px solid rgba(127,255,110,0.2);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    animation: slideIn 0.5s ease;
+  }
+  .success-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: rgba(127,255,110,0.12);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .success-text h2 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+    color: var(--accent);
+  }
+  .success-text p {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .ref-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ref-id::before { content: 'REF:'; color: var(--muted); }
+  .ref-code {
+    background: rgba(110,143,255,0.1);
+    border: 1px solid rgba(110,143,255,0.2);
+    padding: 2px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+  }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    animation: fadeUp 0.4s ease both;
+  }
+  .stat-card:nth-child(1) { animation-delay: 0.1s; }
+  .stat-card:nth-child(2) { animation-delay: 0.15s; }
+  .stat-card:nth-child(3) { animation-delay: 0.2s; }
+  .stat-card:nth-child(4) { animation-delay: 0.25s; }
+
+  .stat-val {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* APPLICATION SUMMARY TABLE */
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    animation: fadeUp 0.4s ease both;
+  }
+  .summary-card:nth-child(1) { animation-delay: 0.3s; }
+  .summary-card:nth-child(2) { animation-delay: 0.35s; }
+
+  .summary-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(42,42,58,0.6);
+    font-size: 12px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .summary-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    text-align: right;
+    max-width: 200px;
+  }
+  .status-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+  }
+  .badge-submitted { background: rgba(110,143,255,0.12); color: var(--accent2); border: 1px solid rgba(110,143,255,0.25); }
+  .badge-reviewing { background: rgba(250,204,21,0.1); color: #facc15; border: 1px solid rgba(250,204,21,0.25); }
+  .badge-done      { background: rgba(127,255,110,0.1); color: var(--accent); border: 1px solid rgba(127,255,110,0.25); }
+
+  /* TIMELINE */
+  .timeline {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.4s ease 0.4s both;
+  }
+  .timeline-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .tl-item {
+    display: flex;
+    gap: 16px;
+    position: relative;
+    padding-bottom: 20px;
+  }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item:not(:last-child) .tl-dot::after {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 24px;
+    width: 1px;
+    height: calc(100% - 4px);
+    background: var(--border);
+  }
+  .tl-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .tl-done  { background: rgba(127,255,110,0.15); border: 1.5px solid var(--accent); color: var(--accent); }
+  .tl-now   { background: rgba(110,143,255,0.15); border: 1.5px solid var(--accent2); color: var(--accent2); }
+  .tl-later { background: rgba(42,42,58,0.5); border: 1.5px solid var(--border); color: var(--muted); }
+
+  .tl-body { flex: 1; padding-top: 2px; }
+  .tl-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .tl-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .tl-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+    padding-top: 4px;
+  }
+
+  /* SIMILAR JOBS */
+  .similar-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .mini-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-decoration: none;
+    transition: all 0.2s;
+    animation: fadeUp 0.4s ease both;
+    display: block;
+  }
+  .mini-card:nth-child(1) { animation-delay: 0.45s; }
+  .mini-card:nth-child(2) { animation-delay: 0.50s; }
+  .mini-card:nth-child(3) { animation-delay: 0.55s; }
+  .mini-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+  .mini-co {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.06em;
+  }
+  .mini-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+  .mini-sal {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  /* ACTIONS */
+  .actions-row {
+    display: flex;
+    gap: 12px;
+    animation: fadeUp 0.4s ease 0.6s both;
+  }
+  .btn-primary {
+    padding: 12px 24px;
+    background: var(--accent);
+    color: #0c0c0f;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-ghost {
+    padding: 12px 24px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text); }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">arcane<span>.</span>jobs</div>
+</nav>
+
+<div class="container">
+
+  <!-- SUCCESS BANNER -->
+  <div class="success-banner" id="success-banner">
+    <div class="success-icon">✓</div>
+    <div class="success-text">
+      <h2>Application submitted</h2>
+      <p>Your application to <strong style="color:var(--text)">Nexus AI</strong> for the <strong style="color:var(--text)">Senior ML Engineer</strong> role has been received.<br>Nexus AI typically responds within 3–5 business days.</p>
+      <div class="ref-id"><span class="ref-code">NXS-2024-4471</span></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid" id="application-stats">
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--accent)">1</div>
+      <div class="stat-label">Application sent</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--accent2)">847</div>
+      <div class="stat-label">Applicants this role</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#ffc864">3–5</div>
+      <div class="stat-label">Days to response</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#ff8e8e">12%</div>
+      <div class="stat-label">Interview rate</div>
+    </div>
+  </div>
+
+  <!-- APPLICATION SUMMARY -->
+  <div class="section-title">Application summary</div>
+
+  <div class="summary-grid">
+    <div class="summary-card" id="application-details">
+      <div class="summary-card-title">Your submission</div>
+      <div class="summary-row">
+        <span class="summary-key">Applicant</span>
+        <span class="summary-val" id="applicant-name">Arjun Sharma</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Email</span>
+        <span class="summary-val">arjun@example.com</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Experience</span>
+        <span class="summary-val">5–8 years</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Resume</span>
+        <span class="summary-val" style="color:var(--accent)">arjun_resume.pdf ✓</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Submitted</span>
+        <span class="summary-val" id="submit-time">Today, 14:32 IST</span>
+      </div>
+    </div>
+
+    <div class="summary-card" id="role-details">
+      <div class="summary-card-title">Role details</div>
+      <div class="summary-row">
+        <span class="summary-key">Company</span>
+        <span class="summary-val">Nexus AI</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Role</span>
+        <span class="summary-val">Senior ML Engineer</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Location</span>
+        <span class="summary-val">Remote · San Francisco</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Salary</span>
+        <span class="summary-val" style="color:var(--accent)">$180k – $240k</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-key">Status</span>
+        <span class="summary-val"><span class="status-badge badge-submitted" id="application-status">SUBMITTED</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section-title">What happens next</div>
+
+  <div class="timeline" id="process-timeline">
+    <div class="tl-item">
+      <div class="tl-dot tl-done">✓</div>
+      <div class="tl-body">
+        <div class="tl-label">Application received</div>
+        <div class="tl-sub">Your profile has been added to the candidate queue</div>
+      </div>
+      <div class="tl-time">Now</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot tl-now">◉</div>
+      <div class="tl-body">
+        <div class="tl-label">Initial screening</div>
+        <div class="tl-sub">Talent team reviews resume and cover note</div>
+      </div>
+      <div class="tl-time">1–2 days</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot tl-later">○</div>
+      <div class="tl-body">
+        <div class="tl-label">Technical assessment</div>
+        <div class="tl-sub">Async ML take-home or live coding session</div>
+      </div>
+      <div class="tl-time">3–5 days</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot tl-later">○</div>
+      <div class="tl-body">
+        <div class="tl-label">Final interviews</div>
+        <div class="tl-sub">3 rounds: system design · ML depth · culture fit</div>
+      </div>
+      <div class="tl-time">Week 2–3</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot tl-later">○</div>
+      <div class="tl-body">
+        <div class="tl-label">Offer</div>
+        <div class="tl-sub">Written offer with full compensation breakdown</div>
+      </div>
+      <div class="tl-time">Week 3–4</div>
+    </div>
+  </div>
+
+  <!-- SIMILAR JOBS -->
+  <div class="section-title">Similar roles you might like</div>
+
+  <div class="similar-row" id="similar-jobs">
+    <a href="test2.html?job=ai-research-scientist" class="mini-card">
+      <div class="mini-co">PRISM LABS · LONDON</div>
+      <div class="mini-title">AI Research Scientist</div>
+      <div class="mini-sal">£95k – £140k</div>
+    </a>
+    <a href="test2.html?job=backend-engineer" class="mini-card">
+      <div class="mini-co">DEEPFORM · REMOTE</div>
+      <div class="mini-title">Backend Engineer (Python)</div>
+      <div class="mini-sal">$110k – $145k</div>
+    </a>
+    <a href="test2.html?job=devrel-engineer" class="mini-card">
+      <div class="mini-co">SYNAPSE DEV · REMOTE</div>
+      <div class="mini-title">Developer Relations Engineer</div>
+      <div class="mini-sal">$120k – $155k</div>
+    </a>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions-row">
+    <a href="test.html" class="btn-primary" id="browse-more-btn">Browse more roles</a>
+    <a href="#" class="btn-ghost" id="download-confirmation-btn">Download confirmation</a>
+    <a href="#" class="btn-ghost" id="share-btn">Share this role</a>
+  </div>
+
+</div>
+
+<script>
+  // Set real timestamp
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+  document.getElementById('submit-time').textContent = 'Today, ' + timeStr;
+</script>
+</body>
+</html>
