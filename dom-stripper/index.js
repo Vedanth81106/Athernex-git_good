@@ -1,4 +1,4 @@
-import { waitForNetworkSettle } from './prechecks/settle.js';
+import { waitForNetworkSettle, getShadowRoots } from './prechecks/settle.js';
 import { processAOMNode } from './prechecks/aomGate.js';
 import { applyStrip1 } from './strips/strip1_blocklist.js';
 import { applyStrip2 } from './strips/strip2_visibility.js';
@@ -20,9 +20,8 @@ export const extractStrippedDOM = async () => {
   const startTime = performance.now();
 
   await waitForNetworkSettle();
-  
-  // Adjusted to only use document since getShadowRoots isn't in your settle.js
-  const allRoots = [document];
+  const shadowRoots = getShadowRoots();
+  const allRoots = [document, ...shadowRoots];
 
   const rawAOMNodes = [];
   const candidateElements = [];
@@ -70,9 +69,8 @@ export const extractStrippedDOM = async () => {
   surviving = applyStrip9(surviving);
   console.log(`[Dedup] Removed: ${before9 - surviving.length}`);
 
-  surviving = applyStrip10(surviving);
-  const aomEls = rawAOMNodes.map(n => n.el);
-  applyStrip10(aomEls);
+  applyStrip10(surviving);
+  applyStrip10(rawAOMNodes.map(n => n.el));
 
   const before11 = surviving.length;
   surviving = applyStrip11(surviving);
@@ -102,9 +100,18 @@ export const extractStrippedDOM = async () => {
   return finalResult;
 };
 
+// Remove the "if (typeof window !== 'undefined')" block and use this instead:
+
 const Kintsugi = {
     extractStrippedDOM
 };
 
+// This ensures that when esbuild wraps this in an IIFE, 
+// 'extractStrippedDOM' is actually returned to the Kintsugi global.
 export default Kintsugi;
 
+// ALSO: Keep the window assignment for double-safety in the browser console
+if (typeof window !== 'undefined') {
+    window.extractStrippedDOM = extractStrippedDOM;
+    window.Kintsugi = Kintsugi;
+}

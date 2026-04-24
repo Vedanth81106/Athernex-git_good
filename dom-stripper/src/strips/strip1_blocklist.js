@@ -1,4 +1,4 @@
-// strip 1 blocklists all technical, meta and binary tags that add zero value
+// strip 1 blocklists all technicl, meta and binary tags that add zero value
 
 const BLOCKLIST_TAGS = [
   'SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE', 
