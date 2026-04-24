@@ -47,9 +47,13 @@ class HealRequest(BaseModel):
     old_selector: str
     current_dom: List[Any]
 
+
 class HealLogResponse(BaseModel):
+    job_id: int
+    intent: str
     new_selector: str
     confidence: float
+    healed_by: str
 
     model_config = {"from_attributes": True}
 
