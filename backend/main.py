@@ -16,7 +16,6 @@ import re
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WRAPPER_PATH = os.path.join(BASE_DIR, "middleware", "wrapper.py")
 
-
 load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
