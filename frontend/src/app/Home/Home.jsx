@@ -2,7 +2,8 @@
 import React from 'react'
 import PixelBlast from '@/components/PixelBlast.jsx'
 import Shuffle from '@/components/Shuffle';
-
+import EncryptButton from '@/components/Button.jsx'
+import Link from 'next/link';
 const Home = () => {
   return (
     <div className="relative h-screen w-full overflow-hidden bg-neutral-950">
@@ -33,6 +34,15 @@ const Home = () => {
             text=" Kintsugi "
             triggerOnHover={true}
           />
+        </div>
+        {/* CTA Section: Button remains interactive */}
+        <div className="flex flex-col items-center gap-4 pointer-events-auto">
+          <p className="font-mono text-xs uppercase tracking-widest text-neutral-500">
+            Click Here to Start
+          </p>
+          <Link href="/dashboard">
+            <EncryptButton />
+          </Link>
         </div>
       </div>
     </div>
