@@ -7,3 +7,4 @@ middleware/testware/__pycache__/
 node_modules/
 /.vscode/
 .env
+.venv
