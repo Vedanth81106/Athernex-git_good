@@ -11,6 +11,7 @@ from google.genai import types
 from datetime import datetime, UTC
 import subprocess
 import sys
+import re
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WRAPPER_PATH = os.path.join(BASE_DIR, "middleware", "wrapper.py")
@@ -24,7 +25,7 @@ app = FastAPI()
 # cors
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", 'http://127.0.0.1:8000'],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,16 +53,18 @@ def create_job(job: schemas.JobCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_job)
 
+    strip_json = json.dumps(job.strip_config)
+
     # 3. AUTO-TRIGGER THE WRAPPER
     # sys.executable ensures the subprocess uses the same .venv as your backend
     # subprocess.Popen is non-blocking, so the API returns while the browser runs
     try:
         subprocess.Popen(
-            [sys.executable, WRAPPER_PATH, str(db_job.job_id)],
+            [sys.executable, WRAPPER_PATH, str(db_job.job_id), strip_json],
             stdout=sys.stdout,
             stderr=sys.stderr
         )
-        print(f"[*] Successfully launched Kintsugi Wrapper for Job {db_job.job_id}")
+        print(f"[*] Successfully launched Kintsugi Wrapper for Job {db_job.job_id} with custom strips")
     except Exception as e:
         print(f"[!] Critical Error: Failed to launch wrapper: {e}")
 
@@ -95,19 +98,17 @@ def update_status(job_id: int, status_update: schemas.StatusUpdate, db: Session 
 #endpoint for returning a Selector instance (a row) which has the intent and job_id as requested by middleware
 @app.get("/selectors/", response_model=schemas.SelectorResponse)
 def get_selector(intent: str, job_id: int, db: Session = Depends(get_db)):
-    # Filter by both intent and job_id
+    # Find the MOST RECENT successful selector for this intent globally
     selector = db.query(models.Selectors).filter(
-        models.Selectors.intent == intent, 
-        models.Selectors.job_id == job_id
-    ).first()
+        models.Selectors.intent == intent
+    ).order_by(models.Selectors.updated_at.desc()).first()
 
     if selector:
         return selector
     else:
-        # Status code 404 for first-run scenarios
         raise HTTPException(
             status_code=404, 
-            detail=f"Baseline for intent '{intent}' in job {job_id} not found."
+            detail=f"No historical baseline found for intent '{intent}'."
         )
 
 @app.post("/selectors/", response_model=schemas.SelectorResponse, status_code=201)
@@ -146,7 +147,9 @@ async def heal_endpoint(heal_body: schemas.HealRequest, db: Session = Depends(ge
     if not the_job:
         raise HTTPException(status_code=404, detail=f"job with id: {target_job_id} not found")
 
-    selector_row = db.query(models.Selectors).filter(models.Selectors.job_id == target_job_id, models.Selectors.intent == target_intent).first()
+    selector_row = db.query(models.Selectors).filter(
+    models.Selectors.intent == target_intent
+).order_by(models.Selectors.updated_at.desc()).first()
     if not selector_row:
         raise HTTPException(status_code=400, detail="No successful run recorded for this intent. Kintsugi can only heal selectors that have worked before.")
     last_success_dom = selector_row.last_success_dom
@@ -186,7 +189,10 @@ async def heal_endpoint(heal_body: schemas.HealRequest, db: Session = Depends(ge
         contents=f"{prompt}",
         config=types.GenerateContentConfig(response_mime_type="application/json")
     )
-    response_dict = json.loads(response.text)
+    response_text = response.text.strip()
+    if response_text.startswith("```"):
+        response_text = re.sub(r"```(?:json)?", "", response_text).strip()
+    response_dict = json.loads(response_text)
 
     new_selector = response_dict.get('new_selector')
     confidence = response_dict.get('confidence')
@@ -221,7 +227,24 @@ def new_heal_log(heal_log: schemas.HealLogBase, db: Session = Depends(get_db)):
     db.refresh(new_heal_log)
     return {"message": "heal log saved successfully"}
 
+# change by Tahseen 
 
+# Ensure these imports are at the top
+from typing import List
+
+@app.get("/heal_logs/", response_model=List[schemas.HealLogResponse])
+def get_heal_logs(db: Session = Depends(get_db)):
+    # Even though we query all, the response_model filters it to 2 fields
+    return db.query(models.HealLogs).all()
+
+@app.get("/all_selectors/", response_model=List[schemas.SelectorResponse])
+def get_all_selectors(db: Session = Depends(get_db)):
+    try:
+        selectors = db.query(models.Selectors).all()
+        return selectors
+    except Exception as e:
+        print(f"Error fetching selectors: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 # check database.py for connection details
 # cd backend
 # ./venv/bin/python -m uvicorn main:app --reload
